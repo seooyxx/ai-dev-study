@@ -34,14 +34,13 @@ jobs:
             echo "노트북에 빈칸이 남아있습니다."
             exit 1
           else
-            echo "모든 노트북이 완료되었습니다."
+            echo "모든 빈칸이 채워졌습니다."
           fi
 
       # Step 5: 노트북의 모든 셀이 실행되었는지 확인
       - name: Validate notebook execution
         run: |
-          python -m nbformat --validate answer.ipynb
-          python - << 'EOF'
+          cat > validate_notebook.py << 'EOF'
 import nbformat
 
 with open('answer.ipynb') as f:
