@@ -21,17 +21,18 @@ jobs:
         run: |
           docker build -t notebook-checker .
 
-      # Step 3: Docker 컨테이너에서 노트북 실행
-      - name: Run Notebook Tests
+      # Step 3: 노트북 내 <fill>이 남아있는지 검사
+      - name: Check for <fill>
         run: |
-          docker run --rm notebook-checker bash -c "jupyter nbconvert --to notebook --execute --inplace week-*.ipynb"
-      
-      # Step 4: 노트북 내 <fill>이 남아있는지 검사
-      - name: Check for ##<fill>##
-        run: |
-          if grep -rn "##<fill>##" week-*.ipynb; then
+          if grep -rn "##<fill>##" answer.ipynb; then
             echo "노트북에 빈칸이 남아있습니다."
             exit 1
           else
             echo "모든 노트북이 완료되었습니다."
           fi
+
+      # Step 4: Docker 컨테이너에서 노트북 실행
+      - name: Run Notebook Tests
+        run: |
+          docker run --rm notebook-checker bash -c "jupyter nbconvert --to notebook --execute --inplace answer.ipynb"
+      
