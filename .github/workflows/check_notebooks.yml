@@ -30,7 +30,7 @@ jobs:
       # Step 4: 노트북 내 <fill>이 남아있는지 검사
       - name: Check for <fill>
         run: |
-          if grep -rn "\#\#<fill>\#\#" answer.ipynb; then
+          if grep -rn "##<fill>##" answer.ipynb; then
             echo "노트북에 빈칸이 남아있습니다."
             exit 1
           else
@@ -41,15 +41,14 @@ jobs:
       - name: Validate notebook execution
         run: |
           python -m nbformat --validate answer.ipynb
-          python -c "
+          python - << 'EOF'
 import nbformat
 
 with open('answer.ipynb') as f:
     nb = nbformat.read(f, as_version=4)
     for cell in nb.cells:
-        if cell.cell_type == 'code':
-            if cell.execution_count is None:
-                print(f'Cell {cell.source[:30]}... not executed')
-                exit(1)
+        if cell.cell_type == 'code' and cell.execution_count is None:
+            print(f'Cell {cell.source[:30]}... not executed')
+            exit(1)
     print('All cells executed successfully.')
-"
+EOF
