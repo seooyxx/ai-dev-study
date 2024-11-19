@@ -1,0 +1,44 @@
+name: Check Jupyter Notebooks
+
+on:
+  push:
+    branches:
+      - week-1
+      - week-2
+      - week-3
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: 레포지토리의 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: 파이썬 환경 설정
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
+
+      # Step 3: 의존성 패키지 설치
+      - name: Install dependencies
+        run: |
+          pip install nbformat
+
+      # Step 4: 노트북 내 <fill>이 남아있는지 검사
+      - name: Check for <fill>
+        run: |
+          if grep -rn "##<fill>##" answer.ipynb; then
+            echo "노트북에 빈칸이 남아있습니다."
+            exit 1
+          else
+            echo "모든 빈칸이 채워졌습니다."
+          fi
+
+      # Step 5: 노트북의 모든 셀이 실행되었는지 확인
+      - name: Validate notebook execution
+        run: |
+          python -m nbformat --validate answer.ipynb
+          python validate_notebook.py
